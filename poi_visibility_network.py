@@ -86,6 +86,7 @@ class PoiVisibilityNetwork:
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
 
+
         # Specific code for this plugin
         self.graph_to_draw = 'ivg'
         self.dlg.pushButton.clicked.connect(self.select_output_folder)
@@ -542,7 +543,7 @@ class PoiVisibilityNetwork:
         # Add sight lines and node to project
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
-
+        # I have a mass here
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
             layer = self.iface.addVectorLayer(path_node, " ", "ogr")
