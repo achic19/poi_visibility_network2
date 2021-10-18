@@ -20,13 +20,8 @@ from plugins import processing
 class myQGIS:
     """This class handles part of the logic about Qgis objects ."""
 
-    def __init__(self, path_shp, name, use='plugin'):
+    def __init__(self, path_shp, name):
         # Initiate QgsApplication in case of standalone app
-        if use == "standalone":
-            self.app = QGuiApplication([])
-            QgsApplication.setPrefixPath(r'C:\Program Files\QGIS 3.0\apps\qgis', True)
-            QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
-            QgsApplication.initQgis()
         self.feedback = QgsProcessingFeedback()
         self.shp = self.upload_new_layer(path_shp, name)
         # This variable is to run built tools

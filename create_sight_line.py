@@ -3,6 +3,7 @@
 import json
 import math as mt
 import os
+from os.path import join
 import sys
 
 from PyQt5.QtGui import *
@@ -23,6 +24,45 @@ if inty < 16:
     from plugins.processing.algs.qgis.DeleteDuplicateGeometries import *
 
 
+def find_dead_end(lines: str):
+    """
+    This method finds dead end points by performing three tasks. It first finds the intersections, then gets the first and
+    last vertex of each line, and then extracts the points in task 1 from the points in task 2.
+    :param lines is the path for the shp file on which to find dead ends
+    """
+    input_output = 'work_folder/general/dead_end_int.shp'
+    local_output = 'work_folder/general/dead_end_str_end.shp'
+    final_output = 'work_folder/general/dead_end.shp'
+
+    processing.run("native:lineintersections", {
+        'INPUT': lines,
+        'INTERSECT': lines,
+        'INPUT_FIELDS': [], 'INTERSECT_FIELDS': [], 'INTERSECT_FIELDS_PREFIX': '', 'OUTPUT': input_output})
+
+    processing.run("native:extractspecificvertices", {
+        'INPUT': lines,
+        'VERTICES': '0,-1', 'OUTPUT': local_output})
+
+    processing.run("native:extractbylocation", {
+        'INPUT': local_output,
+        'PREDICATE': [2],
+        'INTERSECT':  input_output,
+        'OUTPUT': final_output})
+
+
+def upload_new_layer(path, name):
+    """Upload shp layers"""
+    layer_name = "layer" + name
+    provider_name = "ogr"
+    layer = QgsVectorLayer(
+        path,
+        layer_name,
+        provider_name)
+    if not layer:
+        print("Layer failed to load!-" + path)
+    return layer
+
+
 class SightLine:
     """This class handles all the logic about the  sight lines."""
 
@@ -35,14 +75,14 @@ class SightLine:
          :param use to identify who call that class -  plugin or standalone """
         # Initiate QgsApplication
         self.junc_loc = os.path.dirname(__file__) + r'\work_folder\general\intersections.shp'
-        self.network_st = os.path.join(os.path.dirname(__file__),
-                                       r'work_folder\fix_geometry\results_file\dissolve_0.shp')
+        self.network_st = join(os.path.dirname(__file__),
+                               r'work_folder\fix_geometry\results_file\dissolve_0.shp')
         self.junc_loc_0 = os.path.dirname(__file__) + r'\work_folder\general\intersections_0.shp'
 
         # These attributes are input from the user
         if network is not None:
-            self.network = self.upload_new_layer(network, "_network")
-        self.constrain = self.upload_new_layer(constrains, "_constrain")
+            self.network = upload_new_layer(network, "_network")
+        self.constrain = upload_new_layer(constrains, "_constrain")
         self.feedback = QgsProcessingFeedback()
         self.res_folder = res_folder
 
@@ -75,19 +115,13 @@ class SightLine:
         for i, layer in enumerate(layers_to_project_path):
             if not (layer is None):
                 # the name for the new reproject file
-                output = os.path.join(os.path.dirname(__file__), relative_folder, names_list[i] + '.shp')
+                output = join(os.path.dirname(__file__), relative_folder, names_list[i] + '.shp')
                 params = {'INPUT': layer, 'TARGET_CRS': target_crs, 'OUTPUT': output}
                 feedback = QgsProcessingFeedback()
                 processing.run("native:reprojectlayer", params, feedback=feedback)
 
     @staticmethod
-    def centerlized(use='plugin'):
-        # Initiate QgsApplication
-        if use == "standalone":
-            app = QGuiApplication([])
-            QgsApplication.setPrefixPath(r'C:\Program Files\QGIS 3.0\apps\qgis', True)
-            QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
-            QgsApplication.initQgis()
+    def centerlized():
         """Reproject all input layers to 3857 CRS"""
 
         input = os.path.dirname(__file__) + r'/work_folder/general/pois.shp'
@@ -134,7 +168,7 @@ class SightLine:
 
         # populate turning points layer with new points
         layer_path = os.path.dirname(__file__) + r'/work_folder/turning_points.shp'
-        layer = self.upload_new_layer(layer_path, "layer")
+        layer = upload_new_layer(layer_path, "layer")
         layer.dataProvider().truncate()
 
         # to single parts
@@ -147,7 +181,7 @@ class SightLine:
         processing.run("native:splitwithlines", {'INPUT': single_part,
                                                  'LINES': single_part,
                                                  'OUTPUT': split_with_lines})
-        lines = self.upload_new_layer(split_with_lines, "lines")
+        lines = upload_new_layer(split_with_lines, "lines")
         temp_list = []
 
         # calculate azimuth and save points with azimuth larger than 30 degrees
@@ -198,7 +232,7 @@ class SightLine:
         """create gdf file"""
 
         # Open text file as gdf file
-        file_path = os.path.join(self.res_folder, graph_name + '.gdf')
+        file_path = join(self.res_folder, graph_name + '.gdf')
         file1 = open(file_path, "w")
         # Write intersection nodes to file
         title = "nodedef>name VARCHAR,x DOUBLE,y DOUBLE,size DOUBLE,type VARCHAR"
@@ -265,19 +299,7 @@ class SightLine:
         del writer
         path = os.path.dirname(__file__) + r'/new_lines4.shp'
 
-        return self.upload_new_layer(path, "pot_lines")
-
-    def upload_new_layer(self, path, name):
-        """Upload shp layers"""
-        layer_name = "layer" + name
-        provider_name = "ogr"
-        layer = QgsVectorLayer(
-            path,
-            layer_name,
-            provider_name)
-        if not layer:
-            print("Layer failed to load!-" + path)
-        return layer
+        return upload_new_layer(path, "pot_lines")
 
     def copy_shape_file_to_result_file(self, src, trg_name):
         """
@@ -286,10 +308,27 @@ class SightLine:
         """
         from shutil import copyfile
         src = src[:-4]
-        dst = os.path.join(self.res_folder, trg_name)
+        dst = join(self.res_folder, trg_name)
         for ext in ['.shp', '.dbf', '.prj', '.shx']:
             copyfile(src + ext, dst + ext)
 
     def add_layers_to_pro(self, layer_array):
         """Adding layers to project"""
         self.project.addMapLayers(layer_array)
+
+
+if __name__ == "__main__":
+    from qgis.core import QgsApplication
+
+    # Start new Qgis application
+    app = QGuiApplication([])
+    QgsApplication.setPrefixPath(r'C:\Program Files\QGIS 3.0\apps\qgis', True)
+    QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
+    QgsApplication.initQgis()
+    split_with_lines = os.path.dirname(__file__) + r'/splitwithlines.shp'
+    find_dead_end(split_with_lines)
+    # create line for other points in the list
+    """For standalone application"""
+    # Exit applications
+    QgsApplication.exitQgis()
+    app.exit()
