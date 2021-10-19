@@ -149,7 +149,6 @@ class FindSightLine:
         # Only polygons been passed will be store it to change their status later
         self.passed_polys = []
 
-
         # If the current line intersects polygon lines, this line is not sight line
         if self.calculate_intersections():
             self.is_sight_line = False
@@ -238,7 +237,8 @@ class FindSightLine:
         """
         cur_cell = self.data_base[self.cur_cell]
         for poly in cur_cell:
-            if poly.is_no_passed and self.test_line.crosses(poly.poly_qgs):
+            if poly.is_no_passed and self.test_line.crosses(
+                    QgsGeometry.fromRect(poly.poly_qgs.boundingBox())) and self.test_line.crosses(poly.poly_qgs):
                 return True
             else:
                 poly.is_no_passed = False
@@ -298,15 +298,15 @@ class SightLineDB:
         input_layers, rectangle_points = [upload_new_layer(input_in, 'file'),
                                           upload_new_layer(input_constrains, 'file')], []
         # Get  the layers' rectangle extent
-
+        extent = ''
         for input_layer in input_layers:
             extent = input_layer.extent()
             rectangle_points.append((extent.xMaximum(), extent.yMaximum()))
             rectangle_points.append((extent.xMinimum(), extent.yMinimum()))
 
         # Build SameAreaCell object
-
         size_cell = int(extent.area() / len([feature for feature in input_layers[1].getFeatures()]) * 0.0118)
+
         geo_data_base = SameAreaCell(rectangle_points, size_cell)
 
         # if Necessary create grid. Uncomment the method

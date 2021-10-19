@@ -30,9 +30,9 @@ def find_dead_end(lines: str):
     last vertex of each line, and then extracts the points in task 1 from the points in task 2.
     :param lines is the path for the shp file on which to find dead ends
     """
-    input_output = 'work_folder/general/dead_end_int.shp'
-    local_output = 'work_folder/general/dead_end_str_end.shp'
-    final_output = 'work_folder/general/dead_end.shp'
+    input_output = os.path.dirname(__file__) + '/work_folder/general/dead_end_int.shp'
+    local_output = os.path.dirname(__file__) + '/work_folder/general/dead_end_str_end.shp'
+    final_output = os.path.dirname(__file__) + '/work_folder/general/dead_end.shp'
 
     processing.run("native:lineintersections", {
         'INPUT': lines,
@@ -46,7 +46,7 @@ def find_dead_end(lines: str):
     processing.run("native:extractbylocation", {
         'INPUT': local_output,
         'PREDICATE': [2],
-        'INTERSECT':  input_output,
+        'INTERSECT': input_output,
         'OUTPUT': final_output})
 
 
@@ -213,10 +213,12 @@ class SightLine:
                         temp_list.append(feat)
 
         layer.dataProvider().addFeatures(temp_list)
-
+        # Find dead ends points
+        find_dead_end(split_with_lines)
         # Merge all points to one layer
         layer_2 = os.path.dirname(__file__) + r'\work_folder\general\intersections_1.shp'
-        merge_layers = [layer_path, layer_2]
+        layer_3 = os.path.dirname(__file__) + '/work_folder/general/dead_end.shp'
+        merge_layers = [layer_path, layer_2, layer_3]
         # Merge also intersection points in case of all
         params = {'LAYERS': merge_layers, 'CRS': 'EPSG:3857', 'OUTPUT': self.junc_loc}
 
@@ -325,6 +327,7 @@ if __name__ == "__main__":
     QgsApplication.setPrefixPath(r'C:\Program Files\QGIS 3.0\apps\qgis', True)
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
     QgsApplication.initQgis()
+
     split_with_lines = os.path.dirname(__file__) + r'/splitwithlines.shp'
     find_dead_end(split_with_lines)
     # create line for other points in the list
