@@ -237,12 +237,12 @@ class FindSightLine:
         """
         cur_cell = self.data_base[self.cur_cell]
         for poly in cur_cell:
-            if poly.is_no_passed and self.test_line.crosses(
-                    QgsGeometry.fromRect(poly.poly_qgs.boundingBox())) and self.test_line.crosses(poly.poly_qgs):
-                return True
-            else:
-                poly.is_no_passed = False
-                self.passed_polys.append(poly)
+            if poly.is_no_passed:
+                if self.test_line.crosses(poly.poly_qgs):
+                    return True
+                else:
+                    poly.is_no_passed = False
+                    self.passed_polys.append(poly)
         return False
 
 
