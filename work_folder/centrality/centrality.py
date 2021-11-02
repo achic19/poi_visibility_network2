@@ -1,5 +1,8 @@
 import networkx as nx
 from shutil import copy
+from os.path import join
+from os import replace
+
 
 class CentralityGraph:
     """
@@ -47,16 +50,17 @@ class CentralityGraph:
         node_closeness = nx.closeness_centrality(self.graph)
         nx.set_node_attributes(self.graph, node_closeness, 'closeness')
 
-    def to_shp(self, out_dir_shp,prj):
+    def to_shp(self):
         """
         It saves the graph as a shapefile.
-        :param out_dir_shp: The directory where the output will be stored.
         """
         print('to_shp')
-        nx.readwrite.nx_shp.write_shp(self.graph, outdir=out_dir_shp)
-        # copy the projection file into results folder
-        # copy()
-        # [copy('.'.join((path, file_ext)), folder) for file_ext in ('dbf', 'prj', 'shp', 'shx')]
+        nx.readwrite.nx_shp.write_shp(self.graph)
+
+    def test_replace(self):
+        replace('edges.shp', 'sight_line.shp')
+        replace('edges.shx', 'sight_line.shx')
+        replace('edges.dbf', 'sight_line.dbf')
 
 
 if __name__ == '__main__':
@@ -65,4 +69,4 @@ if __name__ == '__main__':
     test.betweenness()
     test.edge_betweenness()
     test.closeness()
-    test.to_shp('results')
+    test.to_shp('results', 'sight_node.prj', 'sight_line.prj')
