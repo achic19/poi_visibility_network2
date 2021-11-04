@@ -50,17 +50,16 @@ class CentralityGraph:
         node_closeness = nx.closeness_centrality(self.graph)
         nx.set_node_attributes(self.graph, node_closeness, 'closeness')
 
-    def to_shp(self):
+    def to_shp(self, extensions: list, new_old: list):
         """
         It saves the graph as a shapefile.
+        param: extensions: the file extensions of the files
+        param: extensions: the file extensions of the files
         """
         print('to_shp')
-        nx.readwrite.nx_shp.write_shp(self.graph)
-
-    def test_replace(self):
-        replace('edges.shp', 'sight_line.shp')
-        replace('edges.shx', 'sight_line.shx')
-        replace('edges.dbf', 'sight_line.dbf')
+        nx.readwrite.nx_shp.write_shp(self.graph, '.')
+        [replace('.'.join([new_old_file[0], ext]), '.'.join([new_old_file[1], ext])) for new_old_file in new_old for ext
+         in extensions]
 
 
 if __name__ == '__main__':
@@ -69,4 +68,4 @@ if __name__ == '__main__':
     test.betweenness()
     test.edge_betweenness()
     test.closeness()
-    test.to_shp('results', 'sight_node.prj', 'sight_line.prj')
+    test.to_shp(extensions=['shp', 'shx', 'dbf'], new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])

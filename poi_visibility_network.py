@@ -540,7 +540,7 @@ class PoiVisibilityNetwork:
         my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
                                       is_sight_line=self.processing_option)
 
-        # Add sight lines and node to project
+        # Add sight lines and node to project while
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
         # I have a mass here
