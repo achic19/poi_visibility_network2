@@ -15,6 +15,11 @@ class CentralityGraph:
         """
 
         self.graph = nx.Graph(nx.readwrite.nx_shp.read_shp(file_path).to_undirected())
+        self.degree()
+        self.betweenness()
+        self.edge_betweenness()
+        self.closeness()
+        self.to_shp(extensions=['shp', 'shx', 'dbf'], new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
 
     def degree(self):
         """
@@ -52,9 +57,9 @@ class CentralityGraph:
 
     def to_shp(self, extensions: list, new_old: list):
         """
-        It saves the graph as a shapefile.
-        param: extensions: the file extensions of the files
-        param: extensions: the file extensions of the files
+        It saves the graph as a shapefiles and change its name
+        param: extensions: the file extensions to change its name
+        param: new_old: the new names
         """
         print('to_shp')
         nx.readwrite.nx_shp.write_shp(self.graph, '.')
@@ -63,9 +68,4 @@ class CentralityGraph:
 
 
 if __name__ == '__main__':
-    test = CentralityGraph('.')
-    test.degree()
-    test.betweenness()
-    test.edge_betweenness()
-    test.closeness()
-    test.to_shp(extensions=['shp', 'shx', 'dbf'], new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
+    CentralityGraph('.')

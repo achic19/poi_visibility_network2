@@ -42,6 +42,7 @@ from .work_folder.POI.merge_points import *
 from .create_sight_line import *
 from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
+from .work_folder.centrality.centrality import CentralityGraph
 
 
 class PoiVisibilityNetwork:
@@ -428,6 +429,9 @@ class PoiVisibilityNetwork:
         :param poi: check its geometry and if necessary centerlized it
         :return:
         '''
+
+        # what to do
+        # 1- all , 2 - create sight lines 3 - prepare sight lines
         # In case of constrain as polyline file and network involve POI, the polyline file should convert to
         # to polygon file
         if constrains_gis.geometryType() == 1 and self.graph_to_draw in ['ivg', 'poi']:
@@ -505,6 +509,10 @@ class PoiVisibilityNetwork:
                 "sight_line",
                 "ogr")
 
+            # Add centrality indices
+            CentralityGraph(res_folder)
+
+
         nodes = QgsVectorLayer(
             path_node,
             "nodes",
@@ -543,7 +551,7 @@ class PoiVisibilityNetwork:
         # Add sight lines and node to project while
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
-        # I have a mass here
+
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
             layer = self.iface.addVectorLayer(path_node, " ", "ogr")
