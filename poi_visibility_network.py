@@ -87,7 +87,6 @@ class PoiVisibilityNetwork:
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
 
-
         # Specific code for this plugin
         self.graph_to_draw = 'ivg'
         self.dlg.pushButton.clicked.connect(self.select_output_folder)
@@ -179,7 +178,6 @@ class PoiVisibilityNetwork:
 
         if whats_this is not None:
             action.setWhatsThis(whats_this)
-
 
         if add_to_toolbar:
             # Adds plugin icon to Plugins toolbar
@@ -434,6 +432,7 @@ class PoiVisibilityNetwork:
         # 1- all , 2 - create sight lines 3 - prepare sight lines
         # In case of constrain as polyline file and network involve POI, the polyline file should convert to
         # to polygon file
+
         if constrains_gis.geometryType() == 1 and self.graph_to_draw in ['ivg', 'poi']:
             feedback = QgsProcessingFeedback()
             output = os.path.join(os.path.dirname(__file__), r'work_folder/input/building_1.shp')
@@ -509,14 +508,11 @@ class PoiVisibilityNetwork:
                 "sight_line",
                 "ogr")
 
-            # Add centrality indices
-            CentralityGraph(res_folder)
-
-
         nodes = QgsVectorLayer(
             path_node,
             "nodes",
             "ogr")
+
 
         # update Point ID if needed
         if nodes.fields()[len(nodes.fields()) - 1].name() != 'point_id':
@@ -549,11 +545,18 @@ class PoiVisibilityNetwork:
                                       is_sight_line=self.processing_option)
 
         # Add sight lines and node to project while
+        # Add centrality indices
+        import networkx as nx
+
+        # graph = nx.Graph(nx.readwrite.nx_shp.read_shp(res_folder).to_undirected())
+        self.iface.messageBar().pushMessage(str(type(nx.Graph())), level=Qgis.Info)
+
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
 
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
+
             layer = self.iface.addVectorLayer(path_node, " ", "ogr")
             if self.graph_to_draw == 'ivg':
 

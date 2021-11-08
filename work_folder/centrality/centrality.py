@@ -19,7 +19,8 @@ class CentralityGraph:
         self.betweenness()
         self.edge_betweenness()
         self.closeness()
-        self.to_shp(extensions=['shp', 'shx', 'dbf'], new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
+        self.to_shp(location=file_path, extensions=['shp', 'shx', 'dbf'],
+                    new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
 
     def degree(self):
         """
@@ -55,17 +56,19 @@ class CentralityGraph:
         node_closeness = nx.closeness_centrality(self.graph)
         nx.set_node_attributes(self.graph, node_closeness, 'closeness')
 
-    def to_shp(self, extensions: list, new_old: list):
+    def to_shp(self, location, extensions: list, new_old: list):
         """
         It saves the graph as a shapefiles and change its name
         param: extensions: the file extensions to change its name
         param: new_old: the new names
         """
         print('to_shp')
-        nx.readwrite.nx_shp.write_shp(self.graph, '.')
+        nx.readwrite.nx_shp.write_shp(self.graph, location)
         [replace('.'.join([new_old_file[0], ext]), '.'.join([new_old_file[1], ext])) for new_old_file in new_old for ext
          in extensions]
 
 
 if __name__ == '__main__':
-    CentralityGraph('.')
+    G = nx.Graph()
+    print(type(G))
+    # CentralityGraph('.')
