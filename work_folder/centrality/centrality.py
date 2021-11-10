@@ -64,10 +64,9 @@ class CentralityGraph:
         """
         print('to_shp')
         nx.readwrite.nx_shp.write_shp(self.graph, location)
-        [replace('.'.join([new_old_file[0], ext]), '.'.join([new_old_file[1], ext])) for new_old_file in new_old for ext
-         in extensions]
+        [replace(join(location, '.'.join([new_old_file[0], ext])),
+                 join(location, '.'.join([new_old_file[1], ext]))) for new_old_file in new_old for ext in extensions]
 
 
 if __name__ == '__main__':
-
     CentralityGraph('.')

@@ -22,6 +22,7 @@
  ***************************************************************************/
 """
 import os.path
+from os import replace as rp_file_path
 import sys
 
 from PyQt5.QtCore import *
@@ -499,9 +500,14 @@ class PoiVisibilityNetwork:
             #                                     format(str(test_time.times)), level=Qgis.Info)
         # copy sight nodes file to result folder
         my_sight_line.copy_shape_file_to_result_file(final, 'sight_node')
+
+        # Add centrality indices
+
         # Add  new fields that store information about points type and id point
+
         path_node = os.path.join(res_folder, 'sight_node.shp')
         if self.processing_option != 3:
+            CentralityGraph(res_folder)
             sight_line = os.path.join(res_folder, 'sight_line.shp')
             sight_lines = QgsVectorLayer(
                 sight_line,
@@ -543,17 +549,9 @@ class PoiVisibilityNetwork:
         my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
                                       is_sight_line=self.processing_option)
 
-        # Add sight lines and node to project while
-        # Add centrality indices
-        # import networkx as nx
-        #
-        # graph = nx.Graph(nx.readwrite.nx_shp.read_shp(res_folder).to_undirected())
-        # node_degree = nx.degree_centrality(graph)
-        # nx.set_node_attributes(graph, node_degree, 'degree')
-        # nx.readwrite.nx_shp.write_shp(graph, res_folder)
-
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
+
 
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
