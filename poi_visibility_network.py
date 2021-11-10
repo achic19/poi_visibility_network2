@@ -42,7 +42,7 @@ from .work_folder.POI.merge_points import *
 from .create_sight_line import *
 from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
-from .work_folder.centrality.centrality import CentralityGraph
+from .work_folder.centrality.centrality import *
 
 
 class PoiVisibilityNetwork:
@@ -513,7 +513,6 @@ class PoiVisibilityNetwork:
             "nodes",
             "ogr")
 
-
         # update Point ID if needed
         if nodes.fields()[len(nodes.fields()) - 1].name() != 'point_id':
             nodes.dataProvider().addAttributes(
@@ -546,10 +545,12 @@ class PoiVisibilityNetwork:
 
         # Add sight lines and node to project while
         # Add centrality indices
-        import networkx as nx
-
+        # import networkx as nx
+        #
         # graph = nx.Graph(nx.readwrite.nx_shp.read_shp(res_folder).to_undirected())
-        self.iface.messageBar().pushMessage(str(type(nx.Graph())), level=Qgis.Info)
+        # node_degree = nx.degree_centrality(graph)
+        # nx.set_node_attributes(graph, node_degree, 'degree')
+        # nx.readwrite.nx_shp.write_shp(graph, res_folder)
 
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")

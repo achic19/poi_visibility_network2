@@ -69,6 +69,5 @@ class CentralityGraph:
 
 
 if __name__ == '__main__':
-    G = nx.Graph()
-    print(type(G))
-    # CentralityGraph('.')
+
+    CentralityGraph('.')
