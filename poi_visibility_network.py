@@ -507,7 +507,10 @@ class PoiVisibilityNetwork:
 
         path_node = os.path.join(res_folder, 'sight_node.shp')
         if self.processing_option != 3:
-            CentralityGraph(res_folder)
+            if self.processing_option == 1:
+                CentralityGraph(res_folder, True)
+            else:
+                CentralityGraph(res_folder, False)
             sight_line = os.path.join(res_folder, 'sight_line.shp')
             sight_lines = QgsVectorLayer(
                 sight_line,
@@ -551,7 +554,6 @@ class PoiVisibilityNetwork:
 
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
-
 
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
@@ -599,3 +601,6 @@ class PoiVisibilityNetwork:
                 renderer = QgsSingleSymbolRenderer(symbol_1)
                 # apply the renderer to the layer
             layer.setRenderer(renderer)
+        else:
+            path_node = os.path.join(res_folder, 'nodes.shp')
+            self.iface.addVectorLayer(path_node, " ", "ogr")

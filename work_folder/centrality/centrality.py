@@ -9,9 +9,10 @@ class CentralityGraph:
     This class calculates three centrality indices (Closeness, Degree, and Betweenness) based on the networkx library.
     """
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, change_all_name: bool):
         """
         :param file_path: The directory in which the sight lines and sight points files are located.
+        :param change_all_name: A flag to control whether node file names should be changed
         """
 
         self.graph = nx.Graph(nx.readwrite.nx_shp.read_shp(file_path).to_undirected())
@@ -19,8 +20,12 @@ class CentralityGraph:
         self.betweenness()
         self.edge_betweenness()
         self.closeness()
-        self.to_shp(location=file_path, extensions=['shp', 'shx', 'dbf'],
-                    new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
+        if change_all_name:
+            self.to_shp(location=file_path, extensions=['shp', 'shx', 'dbf'],
+                        new_old=[('edges', 'sight_line'), ('nodes', 'sight_node')])
+        else:
+            self.to_shp(location=file_path, extensions=['shp', 'shx', 'dbf'],
+                        new_old=[('edges', 'sight_line')])
 
     def degree(self):
         """
