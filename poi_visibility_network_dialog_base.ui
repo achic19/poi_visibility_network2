@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>515</height>
+    <width>475</width>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>90</height>
+       <height>100</height>
       </size>
      </property>
      <property name="font">
@@ -102,7 +102,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Create point layer from street centerlines</string>
+          <string>Create points layer from street centerlines</string>
          </property>
         </widget>
        </item>
@@ -357,7 +357,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>100</height>
+       <height>150</height>
       </size>
      </property>
      <property name="font">
@@ -368,7 +368,7 @@
       </font>
      </property>
      <property name="title">
-      <string>Distance Options</string>
+      <string>Advanced Options</string>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
@@ -376,7 +376,7 @@
         <x>10</x>
         <y>20</y>
         <width>438</width>
-        <height>80</height>
+        <height>126</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout_2">
@@ -398,7 +398,7 @@
        <property name="horizontalSpacing">
         <number>0</number>
        </property>
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QCheckBox" name="checkBox_2">
          <property name="font">
           <font>
@@ -412,7 +412,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <widget class="QCheckBox" name="checkBox">
          <property name="font">
           <font>
@@ -426,7 +426,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QLineEdit" name="lineEdit_2">
          <property name="enabled">
           <bool>true</bool>
@@ -446,7 +446,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="5" column="0">
         <widget class="QCheckBox" name="checkBox_3">
          <property name="font">
           <font>
@@ -460,7 +460,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="5" column="1">
         <widget class="QLineEdit" name="lineEdit_3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -477,12 +477,29 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkBox_centrality">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Calculate centrality</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
      <item>
       <widget class="QLabel" name="label_12">
        <property name="text">

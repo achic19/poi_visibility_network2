@@ -285,14 +285,16 @@ class PoiVisibilityNetwork:
             if self.dlg.radioButton_5.isChecked():
                 self.dlg.comboBox_3.setEnabled(False)
 
-        # # Distance Options
+        # # Advanced Options
         self.dlg.checkBox_3.setEnabled(flag_streets)
         self.dlg.lineEdit_3.setEnabled(flag_streets)
         if self.processing_option == 3:
+            self.dlg.checkBox_centrality.setEnabled(False)
             self.dlg.checkBox_2.setEnabled(False)
             self.dlg.checkBox.setEnabled(False)
             self.dlg.lineEdit_2.setEnabled(False)
         else:
+            self.dlg.checkBox_centrality.setEnabled(True)
             self.dlg.checkBox_2.setEnabled(True)
             self.dlg.checkBox.setEnabled(True)
             self.dlg.lineEdit_2.setEnabled(True)
@@ -364,7 +366,7 @@ class PoiVisibilityNetwork:
 
         poi_temp = None
         poi = None
-        if self.graph_to_draw in ['ivg', 'poi']:
+        if self.graph_to_draw in ['ivg', 'poi'] or self.processing_option == 2:
             # Identify Point Of Interest layer by its index and get his path
             selectedLayerIndex_3 = self.dlg.comboBox_3.currentIndex()
             poi = poi_list[selectedLayerIndex_3]
@@ -407,14 +409,14 @@ class PoiVisibilityNetwork:
                 aggr_dist = 20
             if flag:
                 self.run_logic(network_temp, constrains, constrains_temp, poi_temp, res_folder, weight, restricted,
-                               restricted_length, poi, aggr_dist)
+                               restricted_length, poi, aggr_dist, self.dlg.checkBox_centrality.isChecked())
                 self.iface.messageBar().pushMessage("Sight lines is created in {} seconds".
                                                     format(str(time.time() - time_tot)), level=Qgis.Info)
             else:
                 self.iface.messageBar().pushMessage(self.error, level=Qgis.Critical)
 
     def run_logic(self, network_temp, constrains_gis, constrains_temp, poi_temp, res_folder, weight, restricted,
-                  restricted_length, poi, aggr_dist):
+                  restricted_length, poi, aggr_dist, is_centrality):
         '''
         The params are input from user
         :param aggr_dist: aggregation distance when  MeanClosePoint function is applied
@@ -426,6 +428,7 @@ class PoiVisibilityNetwork:
         :param restricted:
         :param restricted_length:
         :param poi: check its geometry and if necessary centerlized it
+        :param is_centrality: control whether centrality measures are should be calculate
         :return:
         '''
 
@@ -433,7 +436,6 @@ class PoiVisibilityNetwork:
         # 1- all , 2 - create sight lines 3 - prepare sight lines
         # In case of constrain as polyline file and network involve POI, the polyline file should convert to
         # to polygon file
-
         if constrains_gis.geometryType() == 1 and self.graph_to_draw in ['ivg', 'poi']:
             feedback = QgsProcessingFeedback()
             output = os.path.join(os.path.dirname(__file__), r'work_folder/input/building_1.shp')
@@ -507,10 +509,11 @@ class PoiVisibilityNetwork:
 
         path_node = os.path.join(res_folder, 'sight_node.shp')
         if self.processing_option != 3:
-            if self.processing_option == 1:
-                CentralityGraph(res_folder, True)
-            else:
-                CentralityGraph(res_folder, False)
+            if is_centrality:
+                if self.processing_option == 1:
+                    CentralityGraph(res_folder, True)
+                else:
+                    CentralityGraph(res_folder, False)
             sight_line = os.path.join(res_folder, 'sight_line.shp')
             sight_lines = QgsVectorLayer(
                 sight_line,
@@ -601,6 +604,6 @@ class PoiVisibilityNetwork:
                 renderer = QgsSingleSymbolRenderer(symbol_1)
                 # apply the renderer to the layer
             layer.setRenderer(renderer)
-        else:
+        elif is_centrality:
             path_node = os.path.join(res_folder, 'nodes.shp')
             self.iface.addVectorLayer(path_node, " ", "ogr")

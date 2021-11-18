@@ -16,6 +16,7 @@ class CentralityGraph:
         """
 
         self.graph = nx.Graph(nx.readwrite.nx_shp.read_shp(file_path).to_undirected())
+        self.change_all_name = change_all_name
         self.degree()
         self.betweenness()
         self.edge_betweenness()
@@ -71,7 +72,12 @@ class CentralityGraph:
         nx.readwrite.nx_shp.write_shp(self.graph, location)
         [replace(join(location, '.'.join([new_old_file[0], ext])),
                  join(location, '.'.join([new_old_file[1], ext]))) for new_old_file in new_old for ext in extensions]
+        # In case the the nodes file name is not changed, a projection file for the nodes should be created.
+        # It be done by  copy the sight_line.prj and paste it in the same location as odes.prj
+        if not self.change_all_name:
+            import shutil
+            shutil.copyfile(join(location, 'sight_line.prj'), join(location, 'nodes.prj'))
 
 
 if __name__ == '__main__':
-    CentralityGraph('.')
+    CentralityGraph('.', True)
