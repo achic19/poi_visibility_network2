@@ -373,7 +373,7 @@ class PoiVisibilityNetwork:
             poi_temp = poi.dataProvider().dataSourceUri()
             poi_temp = str.split(poi_temp, '|')[0]
 
-        # Store the workspace folder to work with
+        # Store the result folder to work with
         res_folder = str(self.filename)
 
         # See if OK was pressed
@@ -431,6 +431,9 @@ class PoiVisibilityNetwork:
         :param is_centrality: control whether centrality measures are should be calculate
         :return:
         '''
+        # delete old files
+        from work_folder import delete_file
+        delete_file.delete_file()
 
         # what to do
         # 1- all , 2 - create sight lines 3 - prepare sight lines
