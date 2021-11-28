@@ -320,7 +320,8 @@ class SightLineDB:
         feats, inter_pnt_list = [], [feature.geometry().asPoint() for feature in input_layers[0].getFeatures()]
         # save the cell location of each point in another array
         inter_cell_list = [(geo_data_base.find_cell(feature)) for feature in inter_pnt_list]
-
+        # id for the lines
+        line_id = 0
         for index_i, point_start in enumerate(inter_pnt_list[:-1]):
             # print(index_i)
             index_j = index_i
@@ -339,8 +340,9 @@ class SightLineDB:
                 if find_sight_line.is_sight_line:
                     feat = QgsFeature()
                     feat.setGeometry(test_line)
-                    feat.setAttributes([index_i, index_j])  # Set attributes for the current id
+                    feat.setAttributes([line_id, index_i, index_j])  # Set attributes for the current id
                     feats.append(feat)
+                    line_id += 1
                 # Set the status of polygons to be not passed
                 [feature.set_is_no_passed() for feature in find_sight_line.passed_polys]
 
