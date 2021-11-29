@@ -83,7 +83,7 @@ class PoiVisibilityNetwork:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
-
+        self.poi_name, self.poi_list = None, None
         # This flag manages what to run: all - 1, run with points layers -2, create visibility sight lines - 3
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
@@ -103,6 +103,9 @@ class PoiVisibilityNetwork:
         self.filename = os.path.join(os.path.dirname(__file__), 'results')
         self.layer_list = []
         self.error = ''
+
+        # if the sight lines are generated straight form sight lines allow only point geometry
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -257,13 +260,29 @@ class PoiVisibilityNetwork:
         self.processing_option = 1
         self.select_what_to_perform()
 
+        # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
+        self.dlg.comboBox_3.clear()
+        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+        self.dlg.comboBox_3.addItems(self.poi_name)
+
+
     def run_with_pnt_layer(self):
         self.processing_option = 2
         self.select_what_to_perform()
 
+        # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
+        self.dlg.comboBox_3.clear()
+        self.poi_name, self.poi_list = self.papulate_comboList([0])
+        self.dlg.comboBox_3.addItems(self.poi_name)
+
     def create_pnt_layer(self):
         self.processing_option = 3
         self.select_what_to_perform()
+
+        # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
+        self.dlg.comboBox_3.clear()
+        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+        self.dlg.comboBox_3.addItems(self.poi_name)
 
     def select_what_to_perform(self):
         flag_streets = True
@@ -345,8 +364,8 @@ class PoiVisibilityNetwork:
         network_list_name, network_list = self.papulate_comboList([1])
         self.dlg.comboBox_1.addItems(network_list_name)
         # Add items to poi comboBox
-        poi_name, poi_list = self.papulate_comboList([0, 1, 2])
-        self.dlg.comboBox_3.addItems(poi_name)
+        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+        self.dlg.comboBox_3.addItems(self.poi_name)
 
         # Run the dialog event loop
         result = self.dlg.exec_()
@@ -369,7 +388,7 @@ class PoiVisibilityNetwork:
         if self.graph_to_draw in ['ivg', 'poi'] or self.processing_option == 2:
             # Identify Point Of Interest layer by its index and get his path
             selectedLayerIndex_3 = self.dlg.comboBox_3.currentIndex()
-            poi = poi_list[selectedLayerIndex_3]
+            poi = self.poi_list[selectedLayerIndex_3]
             poi_temp = poi.dataProvider().dataSourceUri()
             poi_temp = str.split(poi_temp, '|')[0]
 
