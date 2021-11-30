@@ -106,7 +106,6 @@ class PoiVisibilityNetwork:
 
         # if the sight lines are generated straight form sight lines allow only point geometry
 
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -265,7 +264,6 @@ class PoiVisibilityNetwork:
         self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
         self.dlg.comboBox_3.addItems(self.poi_name)
 
-
     def run_with_pnt_layer(self):
         self.processing_option = 2
         self.select_what_to_perform()
@@ -364,7 +362,10 @@ class PoiVisibilityNetwork:
         network_list_name, network_list = self.papulate_comboList([1])
         self.dlg.comboBox_1.addItems(network_list_name)
         # Add items to poi comboBox
-        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+        if self.processing_option == 2:
+            self.poi_name, self.poi_list = self.papulate_comboList([0])
+        else:
+            self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
         self.dlg.comboBox_3.addItems(self.poi_name)
 
         # Run the dialog event loop
