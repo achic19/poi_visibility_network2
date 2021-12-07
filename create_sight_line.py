@@ -22,13 +22,15 @@ from plugins import processing
 inty = int(Qgis.QGIS_VERSION.split('-')[0].split('.')[1])
 if inty < 16:
     from plugins.processing.algs.qgis.DeleteDuplicateGeometries import *
+    from plugins.processing.algs.qgis.ExtractSpecificVertices import *
 
 
-def find_dead_end(lines: str):
+def find_dead_end(lines: str, feedback):
     """
     This method finds dead end points by performing three tasks. It first finds the intersections, then gets the first and
     last vertex of each line, and then extracts the points in task 1 from the points in task 2.
     :param lines is the path for the shp file on which to find dead ends
+    :param feedback
     """
     input_output = os.path.dirname(__file__) + '/work_folder/general/dead_end_int.shp'
     local_output = os.path.dirname(__file__) + '/work_folder/general/dead_end_str_end.shp'
@@ -38,10 +40,14 @@ def find_dead_end(lines: str):
         'INPUT': lines,
         'INTERSECT': lines,
         'INPUT_FIELDS': [], 'INTERSECT_FIELDS': [], 'INTERSECT_FIELDS_PREFIX': '', 'OUTPUT': input_output})
-
-    processing.run("native:extractspecificvertices", {
-        'INPUT': lines,
-        'VERTICES': '0,-1', 'OUTPUT': local_output})
+    params = {'INPUT': lines, 'VERTICES': '0,-1', 'OUTPUT': local_output}
+    if inty < 16:
+        alg = ExtractSpecificVertices()
+        alg.initAlgorithm()
+        context = QgsProcessingContext()
+        alg.processAlgorithm(params, context, feedback=feedback)
+    else:
+        processing.run("native:extractspecificvertices", params)
 
     processing.run("native:extractbylocation", {
         'INPUT': local_output,
@@ -214,7 +220,7 @@ class SightLine:
 
         layer.dataProvider().addFeatures(temp_list)
         # Find dead ends points
-        find_dead_end(split_with_lines)
+        find_dead_end(split_with_lines,self.feedback)
         # Merge all points to one layer
         layer_2 = os.path.dirname(__file__) + r'\work_folder\general\intersections_1.shp'
         layer_3 = os.path.dirname(__file__) + '/work_folder/general/dead_end.shp'

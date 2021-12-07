@@ -26,7 +26,7 @@ from os import replace as rp_file_path
 import sys
 
 from PyQt5.QtCore import *
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QProgressBar
 
 # Import my code
 # Tell Python where you get processing from
@@ -79,7 +79,34 @@ class PoiVisibilityNetwork:
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&POI Visibility Network')
-
+        # # Progression bar
+        # progressMessageBar = iface.messageBar().createMessage("Doing something boring...")
+        # progress = QProgressBar()
+        # progress.setMaximum(10)
+        # progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # progressMessageBar.layout().addWidget(progress)
+        # iface.messageBar().pushWidget(progressMessageBar, Qgis.Info)
+        #
+        # for i in range(10):
+        #     time.sleep(1)
+        #     progress.setValue(i + 1)
+        #
+        # iface.messageBar().clearWidgets()
+        #
+        # vlayer = iface.activeLayer()
+        #
+        # count = vlayer.featureCount()
+        # features = vlayer.getFeatures()
+        #
+        # for i, feature in enumerate(features):
+        #     # do something time-consuming here
+        #     print('.')  # printing should give enough time to present the progress
+        #
+        #     percent = i / float(count) * 100
+        #     # iface.mainWindow().statusBar().showMessage("Processed {} %".format(int(percent)))
+        #     iface.statusBarIface().showMessage("Processed {} %".format(int(percent)))
+        #
+        # iface.statusBarIface().clearMessage()
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
