@@ -44,7 +44,7 @@ from .create_sight_line import *
 from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
 from .work_folder.centrality.centrality import *
-
+from .resources import *
 
 class PoiVisibilityNetwork:
     """QGIS Plugin Implementation."""
@@ -602,7 +602,8 @@ class PoiVisibilityNetwork:
         my_sight_line.layers[0] = nodes
         if self.processing_option != 3:
             my_sight_line.layers[1] = sight_lines
-        my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
+        if self.dlg.checkBox_gdf.isChecked():
+            my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
                                       is_sight_line=self.processing_option)
 
         if self.processing_option != 3:
