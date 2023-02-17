@@ -22,11 +22,10 @@
  ***************************************************************************/
 """
 import os.path
-from os import replace as rp_file_path
 import sys
-
+from .resources import *
 from PyQt5.QtCore import *
-from qgis.PyQt.QtWidgets import QAction, QFileDialog, QProgressBar
+from qgis.PyQt.QtWidgets import QAction, QFileDialog
 
 # Import my code
 # Tell Python where you get processing from
@@ -36,7 +35,6 @@ from .poi_visibility_network_dialog import PoiVisibilityNetworkDialog
 # Import the code for the dialog
 # from .resources import *
 sys.path.append(os.path.dirname(__file__))
-from .resources import *
 from .work_folder.fix_geometry.QGIS import *
 from .work_folder.mean_close_point.mean_close_point import *
 from .work_folder.POI.merge_points import *
@@ -45,6 +43,7 @@ from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
 from .work_folder.centrality.centrality import *
 from .resources import *
+
 
 class PoiVisibilityNetwork:
     """QGIS Plugin Implementation."""
@@ -79,45 +78,18 @@ class PoiVisibilityNetwork:
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&POI Visibility Network')
-        # # Progression bar
-        # progressMessageBar = iface.messageBar().createMessage("Doing something boring...")
-        # progress = QProgressBar()
-        # progress.setMaximum(10)
-        # progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        # progressMessageBar.layout().addWidget(progress)
-        # iface.messageBar().pushWidget(progressMessageBar, Qgis.Info)
-        #
-        # for i in range(10):
-        #     time.sleep(1)
-        #     progress.setValue(i + 1)
-        #
-        # iface.messageBar().clearWidgets()
-        #
-        # vlayer = iface.activeLayer()
-        #
-        # count = vlayer.featureCount()
-        # features = vlayer.getFeatures()
-        #
-        # for i, feature in enumerate(features):
-        #     # do something time-consuming here
-        #     print('.')  # printing should give enough time to present the progress
-        #
-        #     percent = i / float(count) * 100
-        #     # iface.mainWindow().statusBar().showMessage("Processed {} %".format(int(percent)))
-        #     iface.statusBarIface().showMessage("Processed {} %".format(int(percent)))
-        #
-        # iface.statusBarIface().clearMessage()
-        # Check if plugin was started the first time in current QGIS session
-        # Must be set in initGui() to survive plugin reloads
+
         self.first_start = None
         self.poi_name, self.poi_list = None, None
+        self.filename = os.path.join(os.path.dirname(__file__), 'results')
+        self.gdf = ''
         # This flag manages what to run: all - 1, run with points layers -2, create visibility sight lines - 3
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
 
         # Specific code for this plugin
         self.graph_to_draw = 'ivg'
-        self.dlg.pushButton.clicked.connect(self.select_output_folder)
+
         self.dlg.radioButton_4.toggled.connect(self.select_ivg_graph)
         self.dlg.radioButton_5.toggled.connect(self.select_snvg_graph)
         self.dlg.radioButton_6.toggled.connect(self.select_poi_graph)
@@ -127,7 +99,10 @@ class PoiVisibilityNetwork:
         self.dlg.radioButton.toggled.connect(self.run_with_pnt_layer)
         self.dlg.radioButton_3.toggled.connect(self.create_pnt_layer)
 
-        self.filename = os.path.join(os.path.dirname(__file__), 'results')
+        # Listen for checkBox_gdf
+        self.dlg.pushButton.clicked.connect(self.select_output_folder)
+        self.dlg.checkBox_gdf.stateChanged.connect(self.enable_upload_folder)
+
         self.layer_list = []
         self.error = ''
 
@@ -244,11 +219,19 @@ class PoiVisibilityNetwork:
             self.iface.removeToolBarIcon(action)
 
     # New methods
+    def enable_upload_folder(self):
+        r"""
+        If the user select to create gdf file he needs to decide where to store them
+        """
+        if self.dlg.checkBox_gdf.isChecked():
+            self.dlg.pushButton.setEnabled(True)
+        else:
+            self.dlg.pushButton.setEnabled(False)
+
     def select_output_folder(self):
 
-        self.filename = QFileDialog.getExistingDirectory(self.dlg, "Select output folder ", self.plugin_dir)
-        self.dlg.lineEdit.setText(str(self.filename))
-        if str(self.filename) == '':
+        self.gdf= QFileDialog.getExistingDirectory(self.dlg, "Select output folder ", self.plugin_dir)
+        if str(self.gdf) == '':
             self.iface.messageBar().pushMessage('You should select folder to store output files', level=Qgis.Warning)
             self.dlg.buttonBox.setEnabled(False)
         else:
@@ -422,6 +405,7 @@ class PoiVisibilityNetwork:
 
         # Store the result folder to work with
         res_folder = str(self.filename)
+
 
         # See if OK was pressed
         if result:
@@ -604,7 +588,7 @@ class PoiVisibilityNetwork:
             my_sight_line.layers[1] = sight_lines
         if self.dlg.checkBox_gdf.isChecked():
             my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
-                                      is_sight_line=self.processing_option)
+                                          is_sight_line=self.processing_option, folder= str(self.gdf))
 
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")

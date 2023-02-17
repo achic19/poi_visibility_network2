@@ -3,8 +3,8 @@
 import json
 import math as mt
 import os
-from os.path import join
 import sys
+from os.path import join
 
 from PyQt5.QtGui import *
 from qgis.PyQt.QtCore import QVariant
@@ -16,7 +16,7 @@ sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
 sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
 sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
 sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
-# sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
+sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
 # Reference the algorithm you want to run
 from plugins import processing
 
@@ -221,7 +221,7 @@ class SightLine:
 
         layer.dataProvider().addFeatures(temp_list)
         # Find dead ends points
-        find_dead_end(split_with_lines,self.feedback)
+        find_dead_end(split_with_lines, self.feedback)
         # Merge all points to one layer
         layer_2 = os.path.dirname(__file__) + r'\work_folder\general\intersections_1.shp'
         layer_3 = os.path.dirname(__file__) + '/work_folder/general/dead_end.shp'
@@ -231,17 +231,18 @@ class SightLine:
 
         processing.run('native:mergevectorlayers', params, feedback=feedback)
 
-    def create_gdf_file(self, weight, graph_name, is_sight_line: int):
+    def create_gdf_file(self, weight, graph_name, is_sight_line: int, folder: str):
         """
         :param weight: 0 all sight lines with same weight 1 all sight lines with weight based on their length
         :param graph_name: for the name of the generated gdf file
         :param is_sight_line: 1 or 2 - there is sight line 3- no sight line layer
+        :param folder: where tho store the gdf file
         :return:
         """
         """create gdf file"""
 
         # Open text file as gdf file
-        file_path = join(self.res_folder, graph_name + '.gdf')
+        file_path = join(folder, graph_name + '.gdf')
         file1 = open(file_path, "w")
         # Write intersection nodes to file
         title = "nodedef>name VARCHAR,x DOUBLE,y DOUBLE,size DOUBLE,type VARCHAR"
