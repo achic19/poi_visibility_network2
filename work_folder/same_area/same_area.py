@@ -18,6 +18,7 @@ from shutil import copy
 # Reference the algorithm you want to run
 sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
 sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
+sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
 from plugins import processing
 
 

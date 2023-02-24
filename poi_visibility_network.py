@@ -23,7 +23,7 @@
 """
 import os.path
 import sys
-from .resources import *
+
 from PyQt5.QtCore import *
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 
@@ -34,6 +34,7 @@ from .poi_visibility_network_dialog import PoiVisibilityNetworkDialog
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 # from .resources import *
+from .resources import *
 sys.path.append(os.path.dirname(__file__))
 from .work_folder.fix_geometry.QGIS import *
 from .work_folder.mean_close_point.mean_close_point import *
@@ -42,7 +43,6 @@ from .create_sight_line import *
 from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
 from .work_folder.centrality.centrality import *
-from .resources import *
 
 
 class PoiVisibilityNetwork:
@@ -82,7 +82,7 @@ class PoiVisibilityNetwork:
         self.first_start = None
         self.poi_name, self.poi_list = None, None
         self.filename = os.path.join(os.path.dirname(__file__), 'results')
-        self.gdf = ''
+        self.gdf = os.path.join(os.path.dirname(__file__), 'results')
         # This flag manages what to run: all - 1, run with points layers -2, create visibility sight lines - 3
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
@@ -96,9 +96,15 @@ class PoiVisibilityNetwork:
 
         # Listen for type of processing
         self.dlg.radioButton_2.toggled.connect(self.run_all)
-        self.dlg.radioButton.toggled.connect(self.run_with_pnt_layer)
         self.dlg.radioButton_3.toggled.connect(self.create_pnt_layer)
 
+        # Listen for vizNet nodes
+        self.dlg.radioButton_7.toggled.connect(self.run_with_pnt_layer)
+        self.dlg.radioButton_gen_from.toggled.connect(self.run_all)
+
+        # Listen for vizNet edges
+        self.dlg.checkBox_intersections.stateChanged.connect(self.create_pnt_layer)
+        self.dlg.checkBox_poi_2.stateChanged.connect(self.create_pnt_layer)
         # Listen for checkBox_gdf
         self.dlg.pushButton.clicked.connect(self.select_output_folder)
         self.dlg.checkBox_gdf.stateChanged.connect(self.enable_upload_folder)
@@ -230,7 +236,7 @@ class PoiVisibilityNetwork:
 
     def select_output_folder(self):
 
-        self.gdf= QFileDialog.getExistingDirectory(self.dlg, "Select output folder ", self.plugin_dir)
+        self.gdf = QFileDialog.getExistingDirectory(self.dlg, "Select output folder ", self.plugin_dir)
         if str(self.gdf) == '':
             self.iface.messageBar().pushMessage('You should select folder to store output files', level=Qgis.Warning)
             self.dlg.buttonBox.setEnabled(False)
@@ -284,13 +290,23 @@ class PoiVisibilityNetwork:
         self.dlg.comboBox_3.addItems(self.poi_name)
 
     def create_pnt_layer(self):
-        self.processing_option = 3
-        self.select_what_to_perform()
+        # In order to run this option two checkBox should be unchecked
+        if not self.dlg.checkBox_intersections.isChecked() and not self.dlg.checkBox_poi_2.isChecked():
+            self.processing_option = 3
+            self.select_what_to_perform()
 
-        # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
-        self.dlg.comboBox_3.clear()
-        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
-        self.dlg.comboBox_3.addItems(self.poi_name)
+            # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
+            self.dlg.comboBox_3.clear()
+            self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+            self.dlg.comboBox_3.addItems(self.poi_name)
+        else:
+            self.processing_option = 1
+            self.select_what_to_perform()
+
+            # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
+            self.dlg.comboBox_3.clear()
+            self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
+            self.dlg.comboBox_3.addItems(self.poi_name)
 
     def select_what_to_perform(self):
         flag_streets = True
@@ -299,7 +315,9 @@ class PoiVisibilityNetwork:
 
         # # #  Create Visibility Graph
         # self.dlg.groupBox_2.enabled = False
-        self.dlg.groupBox_2.setEnabled(flag_streets)
+        self.dlg.groupBox_6.setEnabled(flag_streets)
+        self.dlg.checkBox_center_line.setEnabled(flag_streets)
+        self.dlg.checkBox_poi.setEnabled(flag_streets)
 
         # #Input Layers
         self.dlg.comboBox_1.setEnabled(flag_streets)
@@ -406,7 +424,6 @@ class PoiVisibilityNetwork:
         # Store the result folder to work with
         res_folder = str(self.filename)
 
-
         # See if OK was pressed
         if result:
             time_tot = time.time()
@@ -430,7 +447,8 @@ class PoiVisibilityNetwork:
                 restricted_length = 0
 
             # handle aggregation distance
-            if self.dlg.checkBox_3.isChecked() and self.graph_to_draw != 'poi' and not self.dlg.radioButton.isChecked():
+            if self.dlg.checkBox_3.isChecked() and self.graph_to_draw != 'poi' \
+                    and not self.dlg.radioButton_7.isChecked():
                 try:
                     aggr_dist = float(self.dlg.lineEdit_3.text())
                 except ValueError:
@@ -588,7 +606,7 @@ class PoiVisibilityNetwork:
             my_sight_line.layers[1] = sight_lines
         if self.dlg.checkBox_gdf.isChecked():
             my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
-                                          is_sight_line=self.processing_option, folder= str(self.gdf))
+                                          is_sight_line=self.processing_option, folder=str(self.gdf))
 
         if self.processing_option != 3:
             self.iface.addVectorLayer(sight_line, " ", "ogr")
