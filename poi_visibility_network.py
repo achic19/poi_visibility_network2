@@ -90,13 +90,6 @@ class PoiVisibilityNetwork:
         # Specific code for this plugin
         self.graph_to_draw = 'ivg'
 
-        self.dlg.radioButton_4.toggled.connect(self.select_ivg_graph)
-        self.dlg.radioButton_5.toggled.connect(self.select_snvg_graph)
-        self.dlg.radioButton_6.toggled.connect(self.select_poi_graph)
-
-        # Listen for type of processing
-        self.dlg.radioButton_2.toggled.connect(self.run_all)
-        self.dlg.radioButton_3.toggled.connect(self.create_pnt_layer)
 
         # Listen for vizNet nodes
         self.dlg.radioButton_7.toggled.connect(self.run_with_pnt_layer)
@@ -327,7 +320,7 @@ class PoiVisibilityNetwork:
             self.dlg.comboBox_3.setEnabled(True)
         else:
             self.dlg.label_4.setText('Select  POI')
-            if self.dlg.radioButton_5.isChecked():
+            if self.dlg.checkBox_poi.isChecked():
                 self.dlg.comboBox_3.setEnabled(False)
 
         # # Advanced Options
@@ -435,7 +428,7 @@ class PoiVisibilityNetwork:
             else:
                 weight = 0
             # handle restricted vision
-            if self.dlg.checkBox.isChecked() and not self.dlg.radioButton_3.isChecked():
+            if self.dlg.checkBox.isChecked() and not self.dlg.radioButton_7.isChecked():
                 restricted = 1
                 try:
                     restricted_length = float(self.dlg.lineEdit_2.text())
