@@ -81,8 +81,9 @@ class PoiVisibilityNetwork:
 
         self.first_start = None
         self.poi_name, self.poi_list = None, None
-        self.filename = os.path.join(os.path.dirname(__file__), 'results')
-        self.gdf = os.path.join(os.path.dirname(__file__), 'results')
+        # Store the result folder to work with
+
+        self.gdf = ''
         # This flag manages what to run: all - 1, run with points layers -2, create visibility sight lines - 3
         # create point layers to perform latter create visibility sight lines
         self.processing_option = 1
@@ -328,12 +329,12 @@ class PoiVisibilityNetwork:
         self.dlg.lineEdit_3.setEnabled(flag_streets)
         if self.processing_option == 3:
             self.dlg.checkBox_centrality.setEnabled(False)
-            self.dlg.checkBox_2.setEnabled(False)
+            self.dlg.checkBox_weight.setEnabled(False)
             self.dlg.checkBox.setEnabled(False)
             self.dlg.lineEdit_2.setEnabled(False)
         else:
             self.dlg.checkBox_centrality.setEnabled(True)
-            self.dlg.checkBox_2.setEnabled(True)
+            self.dlg.checkBox_weight.setEnabled(True)
             self.dlg.checkBox.setEnabled(True)
             self.dlg.lineEdit_2.setEnabled(True)
 
@@ -414,8 +415,7 @@ class PoiVisibilityNetwork:
             poi_temp = poi.dataProvider().dataSourceUri()
             poi_temp = str.split(poi_temp, '|')[0]
 
-        # Store the result folder to work with
-        res_folder = str(self.filename)
+
 
         # See if OK was pressed
         if result:
@@ -423,7 +423,7 @@ class PoiVisibilityNetwork:
             # var to validate all inputs
             flag = True
             # handle weight
-            if self.dlg.checkBox_2.isChecked():
+            if self.dlg.checkBox_weight.isChecked():
                 weight = 1
             else:
                 weight = 0
@@ -450,14 +450,14 @@ class PoiVisibilityNetwork:
             else:
                 aggr_dist = 20
             if flag:
-                self.run_logic(network_temp, constrains, constrains_temp, poi_temp, res_folder, weight, restricted,
+                self.run_logic(network_temp, constrains, constrains_temp, poi_temp, weight, restricted,
                                restricted_length, poi, aggr_dist, self.dlg.checkBox_centrality.isChecked())
                 self.iface.messageBar().pushMessage("Sight lines is created in {} seconds".
                                                     format(str(time.time() - time_tot)), level=Qgis.Info)
             else:
                 self.iface.messageBar().pushMessage(self.error, level=Qgis.Critical)
 
-    def run_logic(self, network_temp, constrains_gis, constrains_temp, poi_temp, res_folder, weight, restricted,
+    def run_logic(self, network_temp, constrains_gis, constrains_temp, poi_temp, weight, restricted,
                   restricted_length, poi, aggr_dist, is_centrality):
         '''
         The params are input from user
@@ -465,7 +465,6 @@ class PoiVisibilityNetwork:
         :param network_temp:
         :param constrains_temp:
         :param poi_temp:
-        :param res_folder:
         :param weight:
         :param restricted:
         :param restricted_length:
@@ -476,6 +475,7 @@ class PoiVisibilityNetwork:
         # delete old files
         from work_folder import delete_file
         delete_file.delete_file()
+        res_folder = os.path.join(os.path.dirname(__file__), 'results')
 
         # what to do
         # 1- all , 2 - create sight lines 3 - prepare sight lines
@@ -505,6 +505,7 @@ class PoiVisibilityNetwork:
                                        r'work_folder\fix_geometry\results_file\dissolve_0.shp')
 
             # Create sight_line instance success
+
             my_sight_line = SightLine(network_new, constrains, res_folder, NULL)
 
             # Don't run in case of POI graph
@@ -556,9 +557,9 @@ class PoiVisibilityNetwork:
         if self.processing_option != 3:
             if is_centrality:
                 if self.processing_option == 1:
-                    CentralityGraph(res_folder, True)
+                    CentralityGraph(str(res_folder), True)
                 else:
-                    CentralityGraph(res_folder, False)
+                    CentralityGraph(str(res_folder), False)
             sight_line = os.path.join(res_folder, 'sight_line.shp')
             sight_lines = QgsVectorLayer(
                 sight_line,
@@ -597,17 +598,18 @@ class PoiVisibilityNetwork:
         my_sight_line.layers[0] = nodes
         if self.processing_option != 3:
             my_sight_line.layers[1] = sight_lines
+            my_sight_line.add_weights(weight=weight)
         if self.dlg.checkBox_gdf.isChecked():
             my_sight_line.create_gdf_file(weight=weight, graph_name=self.graph_to_draw,
                                           is_sight_line=self.processing_option, folder=str(self.gdf))
 
         if self.processing_option != 3:
-            self.iface.addVectorLayer(sight_line, " ", "ogr")
+            self.iface.addVectorLayer(sight_line, "sight_lines", "ogr")
 
         # Update symbology for the layers being upload to Qgis project
         if self.processing_option != 2:
 
-            layer = self.iface.addVectorLayer(path_node, " ", "ogr")
+            layer = self.iface.addVectorLayer(path_node, "nodes", "ogr")
             if self.graph_to_draw == 'ivg':
 
                 # define some rules: label, expression, symbol
@@ -652,4 +654,4 @@ class PoiVisibilityNetwork:
             layer.setRenderer(renderer)
         elif is_centrality:
             path_node = os.path.join(res_folder, 'nodes.shp')
-            self.iface.addVectorLayer(path_node, " ", "ogr")
+            self.iface.addVectorLayer(path_node, "nodes", "ogr")

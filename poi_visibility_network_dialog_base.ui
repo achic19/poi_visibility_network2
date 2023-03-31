@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>334</width>
-    <height>649</height>
+    <width>388</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,8 +24,8 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>316</width>
-     <height>124</height>
+     <width>408</width>
+     <height>163</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -37,7 +37,7 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>90</height>
+     <height>100</height>
     </size>
    </property>
    <property name="font">
@@ -54,11 +54,16 @@
    <property name="flat">
     <bool>true</bool>
    </property>
-   <widget class="QWidget" name="">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
+   <widget class="QWidget" name="formLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>348</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QRadioButton" name="radioButton_gen_from">
        <property name="font">
@@ -79,20 +84,6 @@
        </property>
        <property name="autoRepeat">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QRadioButton" name="radioButton_7">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>I already have graph nodes </string>
        </property>
       </widget>
      </item>
@@ -130,6 +121,20 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="0">
+      <widget class="QRadioButton" name="radioButton_7">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>I already have graph nodes </string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -140,15 +145,15 @@
    <property name="geometry">
     <rect>
      <x>9</x>
-     <y>139</y>
-     <width>316</width>
-     <height>90</height>
+     <y>151</y>
+     <width>401</width>
+     <height>100</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>90</height>
+     <height>100</height>
     </size>
    </property>
    <property name="font">
@@ -173,10 +178,10 @@
    <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>258</width>
-      <height>62</height>
+      <x>0</x>
+      <y>30</y>
+      <width>196</width>
+      <height>47</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -237,7 +242,7 @@
     <rect>
      <x>9</x>
      <y>235</y>
-     <width>316</width>
+     <width>381</width>
      <height>120</height>
     </rect>
    </property>
@@ -263,10 +268,10 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>248</width>
-      <height>97</height>
+      <x>0</x>
+      <y>30</y>
+      <width>341</width>
+      <height>101</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_3">
@@ -297,6 +302,12 @@
       <widget class="QComboBox" name="comboBox_1">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="font">
         <font>
@@ -385,10 +396,10 @@
   <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>361</y>
-     <width>316</width>
-     <height>250</height>
+     <x>0</x>
+     <y>370</y>
+     <width>421</width>
+     <height>251</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -414,9 +425,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>401</width>
-      <height>211</height>
+      <y>30</y>
+      <width>347</width>
+      <height>209</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_2">
@@ -481,7 +492,7 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="checkBox_weight">
        <property name="font">
         <font>
          <pointsize>8</pointsize>

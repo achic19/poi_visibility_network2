@@ -231,6 +231,29 @@ class SightLine:
 
         processing.run('native:mergevectorlayers', params, feedback=feedback)
 
+    def add_weights(self,weight):
+        # Add new fields to layer (length and weight)
+        if self.layers[1].fields()[- 2].name() != "length":
+            self.layers[1].dataProvider().addAttributes([QgsField("length", QVariant.Double)])
+            self.layers[1].updateFields()
+
+        if self.layers[1].fields()[- 1].name() != "weight":
+            self.layers[1].dataProvider().addAttributes([QgsField("weight", QVariant.Double)])
+            self.layers[1].updateFields()
+
+        # Populate weight data
+        n = len(self.layers[1].fields())
+        i = 0
+        for f in self.layers[1].getFeatures():
+            geom_length = f.geometry().length()
+            self.layers[1].dataProvider().changeAttributeValues({i: {n - 2: geom_length}})
+            if weight:
+                self.weight_calculation(i, n, 1 / mt.pow(geom_length, 2) * 10000)
+                i = i + 1
+            else:
+                self.weight_calculation(i, n, 1)
+                i = i + 1
+
     def create_gdf_file(self, weight, graph_name, is_sight_line: int, folder: str):
         """
         :param weight: 0 all sight lines with same weight 1 all sight lines with weight based on their length
@@ -258,28 +281,6 @@ class SightLine:
 
         # Write sight edges to file
         if is_sight_line != 3:
-            # Add new fields to layer (length and weight)
-            if self.layers[1].fields()[len(self.layers[1].fields()) - 2].name() != "length":
-                self.layers[1].dataProvider().addAttributes([QgsField("length", QVariant.Double)])
-                self.layers[1].updateFields()
-
-            if self.layers[1].fields()[len(self.layers[1].fields()) - 1].name() != "weight":
-                self.layers[1].dataProvider().addAttributes([QgsField("weight", QVariant.Double)])
-                self.layers[1].updateFields()
-
-            # Populate weight data
-            n = len(self.layers[1].fields())
-            i = 0
-            for f in self.layers[1].getFeatures():
-                geom_length = f.geometry().length()
-                self.layers[1].dataProvider().changeAttributeValues({i: {n - 2: geom_length}})
-                if weight:
-                    self.weight_calculation(i, n, 1 / mt.pow(geom_length, 2) * 10000)
-                    i = i + 1
-                else:
-                    self.weight_calculation(i, n, 1)
-                    i = i + 1
-
             # Write title
             file1.write("\nedgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE\n")
             edges_features = self.layers[1].getFeatures()
