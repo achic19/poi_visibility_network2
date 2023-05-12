@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>658</height>
+    <width>357</width>
+    <height>717</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,8 +24,8 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>408</width>
-     <height>163</height>
+     <width>331</width>
+     <height>141</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -57,15 +57,15 @@
    <widget class="QWidget" name="formLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>30</y>
-      <width>348</width>
+      <x>10</x>
+      <y>20</y>
+      <width>321</width>
       <height>111</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
-      <widget class="QRadioButton" name="radioButton_gen_from">
+      <widget class="QRadioButton" name="radioButton_ivg">
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -77,7 +77,7 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace'; font-size:12px; color:#24292f; background-color:#ffffff;&quot;&gt;creates visual connections that integrate locations of POIs within the street network&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Generate from</string>
+        <string>From street centerline and point of interest (POI)</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -87,42 +87,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="checkBox_center_line">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>street centerline layer</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="checkBox_poi">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>POI</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0">
-      <widget class="QRadioButton" name="radioButton_7">
+      <widget class="QRadioButton" name="radioButton_only_edges">
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -135,6 +101,40 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="radioButton_snvg">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Only street centerlines</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="radioButton_poi">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Only POI</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -144,9 +144,9 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>151</y>
-     <width>401</width>
+     <x>10</x>
+     <y>160</y>
+     <width>331</width>
      <height>100</height>
     </rect>
    </property>
@@ -178,10 +178,10 @@
    <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>30</y>
       <width>196</width>
-      <height>47</height>
+      <height>57</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -195,7 +195,7 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="checkBox_intersections">
+      <widget class="QRadioButton" name="radioButton_intersections">
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -204,7 +204,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Between street intersections</string>
+        <string>Between nodes</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -215,7 +215,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_poi_2">
+      <widget class="QRadioButton" name="radioButton_only_point">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -224,13 +227,13 @@
         </font>
        </property>
        <property name="text">
-        <string>Between POI</string>
+        <string>No links are required</string>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -240,10 +243,10 @@
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>235</y>
-     <width>381</width>
-     <height>120</height>
+     <x>10</x>
+     <y>270</y>
+     <width>331</width>
+     <height>131</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -268,9 +271,9 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>30</y>
-      <width>341</width>
+      <width>301</width>
       <height>101</height>
      </rect>
     </property>
@@ -292,6 +295,12 @@
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="toolTip">
+        <string/>
+       </property>
+       <property name="whatsThis">
+        <string/>
        </property>
        <property name="text">
         <string>Select street centerlines</string>
@@ -396,9 +405,9 @@
   <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>370</y>
-     <width>421</width>
+     <x>10</x>
+     <y>420</y>
+     <width>331</width>
      <height>251</height>
     </rect>
    </property>
@@ -426,7 +435,7 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>347</width>
+      <width>231</width>
       <height>209</height>
      </rect>
     </property>
@@ -472,8 +481,17 @@
          <bold>false</bold>
         </font>
        </property>
+       <property name="toolTip">
+        <string>distnace in meters</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>-2</number>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="text">
-        <string>Aggregation distance (distance in meters)</string>
+        <string>Aggregation distance</string>
        </property>
       </widget>
      </item>
@@ -514,8 +532,14 @@
          <bold>false</bold>
         </font>
        </property>
+       <property name="toolTip">
+        <string>maximum distance in meter</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>-2</number>
+       </property>
        <property name="text">
-        <string>Restricted vision (maximum distance in meters)</string>
+        <string>Restricted vision</string>
        </property>
       </widget>
      </item>
@@ -644,6 +668,12 @@
          <bold>false</bold>
         </font>
        </property>
+       <property name="toolTip">
+        <string>distnace in meters</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>5</number>
+       </property>
       </widget>
      </item>
     </layout>
@@ -652,8 +682,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>617</y>
+     <x>20</x>
+     <y>680</y>
      <width>156</width>
      <height>23</height>
     </rect>

@@ -35,6 +35,7 @@ from .poi_visibility_network_dialog import PoiVisibilityNetworkDialog
 # Import the code for the dialog
 # from .resources import *
 from .resources import *
+
 sys.path.append(os.path.dirname(__file__))
 from .work_folder.fix_geometry.QGIS import *
 from .work_folder.mean_close_point.mean_close_point import *
@@ -91,14 +92,15 @@ class PoiVisibilityNetwork:
         # Specific code for this plugin
         self.graph_to_draw = 'ivg'
 
-
         # Listen for vizNet nodes
-        self.dlg.radioButton_7.toggled.connect(self.run_with_pnt_layer)
-        self.dlg.radioButton_gen_from.toggled.connect(self.run_all)
+        self.dlg.radioButton_ivg.toggled.connect(self.select_ivg_graph)
+        self.dlg.radioButton_snvg.toggled.connect(self.select_snvg_graph)
+        self.dlg.radioButton_poi.toggled.connect(self.select_poi_graph)
+        self.dlg.radioButton_only_edges.toggled.connect(self.run_with_pnt_layer)
 
         # Listen for vizNet edges
-        self.dlg.checkBox_intersections.stateChanged.connect(self.create_pnt_layer)
-        self.dlg.checkBox_poi_2.stateChanged.connect(self.create_pnt_layer)
+        self.dlg.radioButton_intersections.toggled.connect(self.create_pnt_layer)
+        self.dlg.radioButton_only_point.toggled.connect(self.create_pnt_layer)
         # Listen for checkBox_gdf
         self.dlg.pushButton.clicked.connect(self.select_output_folder)
         self.dlg.checkBox_gdf.stateChanged.connect(self.enable_upload_folder)
@@ -238,14 +240,19 @@ class PoiVisibilityNetwork:
             self.dlg.buttonBox.setEnabled(True)
 
     # Based on the selected graph customize the plugins
-    def select_snvg_graph(self):
 
+    def enable(self):
+        self.dlg.label_4.setText('Select  POI')
+        self.dlg.groupBox_6.setEnabled(True)
+        self.dlg.comboBox_1.setEnabled(True)
+
+    def select_snvg_graph(self):
         self.dlg.comboBox_3.setEnabled(False)
         # Unable aggregation distance
         self.dlg.checkBox_3.setEnabled(True)
         self.dlg.lineEdit_3.setEnabled(True)
         self.graph_to_draw = 'snvg'
-        # 2
+        self.enable()
 
     def select_poi_graph(self):
 
@@ -254,6 +261,7 @@ class PoiVisibilityNetwork:
         self.dlg.checkBox_3.setEnabled(False)
         self.dlg.lineEdit_3.setEnabled(False)
         self.graph_to_draw = 'poi'
+        self.enable()
         # 3
 
     def select_ivg_graph(self):
@@ -262,17 +270,10 @@ class PoiVisibilityNetwork:
         self.dlg.checkBox_3.setEnabled(True)
         self.dlg.lineEdit_3.setEnabled(True)
         self.graph_to_draw = 'ivg'
+        self.enable()
         # 1
 
     # The next four functions menage which button to en/unable
-    def run_all(self):
-        self.processing_option = 1
-        self.select_what_to_perform()
-
-        # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
-        self.dlg.comboBox_3.clear()
-        self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
-        self.dlg.comboBox_3.addItems(self.poi_name)
 
     def run_with_pnt_layer(self):
         self.processing_option = 2
@@ -285,8 +286,8 @@ class PoiVisibilityNetwork:
 
     def create_pnt_layer(self):
         # In order to run this option two checkBox should be unchecked
-        if not self.dlg.checkBox_intersections.isChecked() and not self.dlg.checkBox_poi_2.isChecked():
-            self.processing_option = 3
+        if self.dlg.radioButton_intersections.isChecked():
+            self.processing_option = 1
             self.select_what_to_perform()
 
             # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
@@ -294,7 +295,7 @@ class PoiVisibilityNetwork:
             self.poi_name, self.poi_list = self.papulate_comboList([0, 1, 2])
             self.dlg.comboBox_3.addItems(self.poi_name)
         else:
-            self.processing_option = 1
+            self.processing_option = 3
             self.select_what_to_perform()
 
             # if the sight lines are generated straight form sight lines allow only point geometry if no allow all
@@ -310,14 +311,12 @@ class PoiVisibilityNetwork:
         # # #  Create Visibility Graph
         # self.dlg.groupBox_2.enabled = False
         self.dlg.groupBox_6.setEnabled(flag_streets)
-        self.dlg.checkBox_center_line.setEnabled(flag_streets)
-        self.dlg.checkBox_poi.setEnabled(flag_streets)
 
         # #Input Layers
         self.dlg.comboBox_1.setEnabled(flag_streets)
         self.dlg.label.setEnabled(flag_streets)
         if self.processing_option == 2:
-            self.dlg.label_4.setText('Select points layer')
+            self.dlg.label_4.setText('Select nodes layer')
             self.dlg.comboBox_3.setEnabled(True)
         else:
             self.dlg.label_4.setText('Select  POI')
@@ -408,14 +407,17 @@ class PoiVisibilityNetwork:
 
         poi_temp = None
         poi = None
+        # # Code to decide what kind o grpah to run
+        # center_line_c = self.dlg.checkBox_center_line.isCheked()
+        # poi_c = self.dlg.checkBox_poi.isCheked()
+        # if poi and center_line_c:
+        #     self.graph_to_draw  =
         if self.graph_to_draw in ['ivg', 'poi'] or self.processing_option == 2:
             # Identify Point Of Interest layer by its index and get his path
             selectedLayerIndex_3 = self.dlg.comboBox_3.currentIndex()
             poi = self.poi_list[selectedLayerIndex_3]
             poi_temp = poi.dataProvider().dataSourceUri()
             poi_temp = str.split(poi_temp, '|')[0]
-
-
 
         # See if OK was pressed
         if result:
@@ -428,7 +430,7 @@ class PoiVisibilityNetwork:
             else:
                 weight = 0
             # handle restricted vision
-            if self.dlg.checkBox.isChecked() and not self.dlg.radioButton_7.isChecked():
+            if self.dlg.checkBox.isChecked() and not self.dlg.radioButton_only_edges.isChecked():
                 restricted = 1
                 try:
                     restricted_length = float(self.dlg.lineEdit_2.text())
@@ -441,7 +443,7 @@ class PoiVisibilityNetwork:
 
             # handle aggregation distance
             if self.dlg.checkBox_3.isChecked() and self.graph_to_draw != 'poi' \
-                    and not self.dlg.radioButton_7.isChecked():
+                    and not self.dlg.radioButton_only_edges.isChecked():
                 try:
                     aggr_dist = float(self.dlg.lineEdit_3.text())
                 except ValueError:
@@ -505,7 +507,6 @@ class PoiVisibilityNetwork:
                                        r'work_folder\fix_geometry\results_file\dissolve_0.shp')
 
             # Create sight_line instance success
-
             my_sight_line = SightLine(network_new, constrains, res_folder, NULL)
 
             # Don't run in case of POI graph
