@@ -34,7 +34,6 @@ from .poi_visibility_network_dialog import PoiVisibilityNetworkDialog
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
 # from .resources import *
-from .resources import *
 
 sys.path.append(os.path.dirname(__file__))
 from .work_folder.fix_geometry.QGIS import *
@@ -44,7 +43,7 @@ from .create_sight_line import *
 from plugins.processing.algs.qgis.LinesToPolygons import *
 from .work_folder.same_area.same_area import *
 from .work_folder.centrality.centrality import *
-
+from .resources import *
 
 class PoiVisibilityNetwork:
     """QGIS Plugin Implementation."""
@@ -314,14 +313,8 @@ class PoiVisibilityNetwork:
 
         # #Input Layers
         self.dlg.comboBox_1.setEnabled(flag_streets)
-        self.dlg.label.setEnabled(flag_streets)
         if self.processing_option == 2:
             self.dlg.label_4.setText('Select nodes layer')
-            self.dlg.comboBox_3.setEnabled(True)
-        else:
-            self.dlg.label_4.setText('Select  POI')
-            if self.dlg.checkBox_poi.isChecked():
-                self.dlg.comboBox_3.setEnabled(False)
 
         # # Advanced Options
         self.dlg.checkBox_3.setEnabled(flag_streets)
@@ -452,10 +445,11 @@ class PoiVisibilityNetwork:
             else:
                 aggr_dist = 20
             if flag:
-                self.run_logic(network_temp, constrains, constrains_temp, poi_temp, weight, restricted,
-                               restricted_length, poi, aggr_dist, self.dlg.checkBox_centrality.isChecked())
-                self.iface.messageBar().pushMessage("Sight lines is created in {} seconds".
-                                                    format(str(time.time() - time_tot)), level=Qgis.Info)
+                if self.run_logic(network_temp, constrains, constrains_temp, poi_temp, weight, restricted,
+                               restricted_length, poi, aggr_dist, self.dlg.checkBox_centrality.isChecked()):
+                    self.iface.messageBar().pushMessage("Sight lines is created in {} seconds".
+                                                        format(str(time.time() - time_tot)), level=Qgis.Info)
+
             else:
                 self.iface.messageBar().pushMessage(self.error, level=Qgis.Critical)
 
@@ -476,7 +470,12 @@ class PoiVisibilityNetwork:
         '''
         # delete old files
         from work_folder import delete_file
-        delete_file.delete_file()
+        if not delete_file.delete_file():
+            self.iface.messageBar().pushMessage('Please note that certain files may not be deleted automatically, '
+                                                'and in such cases, it is recommended to restart QGIS. Restarting the '
+                                                'software can resolve any lingering file locks or dependencies that '
+                                                'may be preventing the deletion of those files.', level=Qgis.Warning)
+            return False
         res_folder = os.path.join(os.path.dirname(__file__), 'results')
 
         # what to do
@@ -656,3 +655,4 @@ class PoiVisibilityNetwork:
         elif is_centrality:
             path_node = os.path.join(res_folder, 'nodes.shp')
             self.iface.addVectorLayer(path_node, "nodes", "ogr")
+        return True
