@@ -12,7 +12,6 @@ In addition, POI Visibility Network provides advanced options to build a graph u
 
 Graphs are constructed and visualised as new layers in QGIS and delivered as Geographic Data Files (GDF), in which nodes and edges of the graph are represented in two distinct comma-separated value sections. GDF file is suitable for further network exploration, analysis and visualisation in all kinds of network software, e.g. https://gephi.org/. 
 
-Sample dataset is available to make it easier for you to test this plug-in: https://drive.google.com/file/d/19EsWVHqqZTXTyvWvpQ98U7xRrc9ZUu6V/view?usp=sharing
 
 Tutorials demonstrating aims and uses of the plug-in:
 https://youtu.be/52_wwbwj-vo
