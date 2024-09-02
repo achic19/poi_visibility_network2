@@ -7,11 +7,11 @@ from qgis.core import *
 # Tell Python where you will get processing from
 
 
-sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
 # Reference the algorithm you want to run
 from plugins import processing
 
@@ -96,12 +96,7 @@ def processAlgorithm(self, parameters, context, feedback):
 
 
 class MeanClosePoint:
-    def __init__(self, distance_to_aggregate, use='plugin'):
-        if use == "standalone":
-            app = QGuiApplication([])
-            QgsApplication.setPrefixPath(r'C:\Program Files\QGIS 3.0\apps\qgis', True)
-            QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
-            QgsApplication.initQgis()
+    def __init__(self, distance_to_aggregate):
         feedback = QgsProcessingFeedback()
 
         """implement add ID"""
@@ -181,10 +176,7 @@ class MeanClosePoint:
         processing.run('native:meancoordinates', params, feedback=feedback)
 
         """For standalone application"""
-        # # Exit applications
-        # if use == 'standalone':
-        #     QgsApplication.exitQgis()
-        #     app.exit()
+
 
     def upload_new_layer(self, path, name):
         """Upload shp layers"""
