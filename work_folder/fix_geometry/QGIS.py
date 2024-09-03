@@ -8,11 +8,11 @@ from qgis.core import *
 from .Qtree import *
 
 # Tell Python where you will get processing from
-sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
 
 from qgis.PyQt.QtCore import QVariant
 from plugins import processing
