@@ -12,11 +12,11 @@ from qgis.analysis import QgsNativeAlgorithms
 from qgis.core import *
 
 # Tell Python where you will get processing from
-sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
-sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.0\apps\qgis\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.4\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.10\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.16\apps\qgis-ltr\python\plugins')
+# sys.path.append(r'C:\Program Files\QGIS 3.22.3\apps\qgis\python\plugins')
 # Reference the algorithm you want to run
 from plugins import processing
 
