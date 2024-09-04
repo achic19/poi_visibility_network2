@@ -464,7 +464,8 @@ class PoiVisibilityNetwork:
             else:
                 weight = 0
             # handle restricted vision
-            if self.dlg.checkBox.isChecked() and not self.dlg.radioButton_only_edges.isChecked():
+            if ((self.dlg.checkBox.isChecked() and not self.dlg.radioButton_only_point.isChecked())
+                or (self.dlg.checkBox.isChecked() and  self.dlg.radioButton_only_edges.isChecked())):
                 restricted = 1
                 try:
                     restricted_length = float(self.dlg.lineEdit_2.text())
